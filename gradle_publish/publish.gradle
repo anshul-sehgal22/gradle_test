@@ -1,0 +1,49 @@
+plugins {
+	id 'java'
+	id "nu.studer.credentials" version "1.0.7"
+	id "com.jfrog.artifactory" version "4.9.7"
+}
+
+apply plugin: 'nu.studer.credentials'
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.artifactory'
+
+def BuildProps = new Properties()
+file("gradle.properties").withInputStream { 
+	BuildProps.load(it) 
+}
+
+String artifactory_password = credentials.userpassword
+
+def ArtifactoryURL = BuildProps.getProperty("artifactory_contextUrl")
+def ArtifactoryUser = BuildProps.getProperty("artifactory_user")
+def ArtifactoryInternalRepoName = BuildProps.getProperty("artifactory_external_repo_name")
+def PublishVersion = BuildProps.getProperty("publish.version")
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact("coreserver-1.0.jar") {
+                extension 'jar'
+				groupId 'com.sterlite.csp'
+				artifactId 'coreserver'
+				version "1.0"
+            }
+        }
+    }
+    repositories {
+        maven {
+            name 'deploy'
+            url "${ArtifactoryURL}${ArtifactoryInternalRepoName}"
+            credentials {
+                username = "${ArtifactoryUser}"
+                password = "${artifactory_password}"
+            }
+        }
+    }
+}
+
+task all {
+        dependsOn 'publish'
+}

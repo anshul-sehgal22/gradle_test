@@ -1,0 +1,6 @@
+publish.version=8.3.0
+artifactory_contextUrl=https://jfrog.sterlitetech-software.com/artifactory/
+artifactory_user=manoj.giri
+artifactory_internal_repo_name=csp-dev-internal-repo
+artifactory_external_repo_name=csp-external-repo/
+som.version=8.3.0
